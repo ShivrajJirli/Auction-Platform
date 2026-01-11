@@ -29,7 +29,7 @@ function App() {
 
   const [loading, setLoading] = useState(false)
 
-  // Persist user session simulation
+  // Persist user session to localStorage
   useEffect(() => {
     if (currentUser) {
       localStorage.setItem('currentUser', JSON.stringify(currentUser))
@@ -38,12 +38,42 @@ function App() {
     }
   }, [currentUser])
 
-  // Function to refresh user data (balance updates)
-  const refreshUser = async () => {
-    if (!currentUser) return
-    const { data } = await supabase.from('users').select('*').eq('id', currentUser.id).single()
-    if (data) setCurrentUser(data)
-  }
+  // Real-time User Data Sync
+  useEffect(() => {
+    if (!currentUser?.id) return
+
+    // 1. Initial Fetch to ensure freshness
+    const fetchFreshUser = async () => {
+      const { data } = await supabase.from('users').select('*').eq('id', currentUser.id).single()
+      if (data) {
+        // Only update if data actually changed to avoid loop
+        setCurrentUser(prev => JSON.stringify(prev) !== JSON.stringify(data) ? data : prev)
+      }
+    }
+    fetchFreshUser()
+
+    // 2. Subscribe to Real-time Changes
+    const channel = supabase
+      .channel('public:users')
+      .on(
+        'postgres_changes',
+        {
+          event: 'UPDATE',
+          schema: 'public',
+          table: 'users',
+          filter: `id=eq.${currentUser.id}`,
+        },
+        (payload) => {
+          console.log('Realtime User Update:', payload)
+          setCurrentUser(payload.new)
+        }
+      )
+      .subscribe()
+
+    return () => {
+      supabase.removeChannel(channel)
+    }
+  }, [currentUser?.id]) // Re-run only if ID changes (login/logout)
 
   const handleLogin = (user) => {
     setCurrentUser(user)
