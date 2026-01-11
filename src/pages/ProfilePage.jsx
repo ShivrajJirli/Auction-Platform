@@ -1,6 +1,36 @@
-import { User, Mail, LogOut, IndianRupee } from 'lucide-react'
+import { useState, useEffect } from 'react'
+import { User, Mail, LogOut, IndianRupee, Loader2 } from 'lucide-react'
+import { supabase } from '../lib/supabaseClient'
 
 export default function ProfilePage({ currentUser, onLogout }) {
+    const [balance, setBalance] = useState(currentUser?.wallet_balance || 0)
+    const [loading, setLoading] = useState(false)
+
+    useEffect(() => {
+        if (currentUser?.id) {
+            fetchLatestBalance()
+        }
+    }, [currentUser])
+
+    const fetchLatestBalance = async () => {
+        try {
+            setLoading(true)
+            const { data, error } = await supabase
+                .from('users')
+                .select('wallet_balance')
+                .eq('id', currentUser.id)
+                .single()
+
+            if (data && !error) {
+                setBalance(data.wallet_balance)
+            }
+        } catch (error) {
+            console.error('Error refreshing balance:', error)
+        } finally {
+            setLoading(false)
+        }
+    }
+
     if (!currentUser) return <div>Loading...</div>
 
     return (
@@ -72,15 +102,23 @@ export default function ProfilePage({ currentUser, onLogout }) {
                 {/* Right Column: Wallet Summary */}
                 <div className="space-y-6">
                     <div className="bg-white rounded-2xl shadow-sm border border-slate-200 p-6">
-                        <h2 className="text-lg font-bold text-slate-900 mb-6 flex items-center gap-2">
-                            <IndianRupee className="text-slate-400" /> Wallet Balance
-                        </h2>
-                        <div className="p-6 bg-gradient-to-br from-indigo-900 to-indigo-800 rounded-2xl text-white shadow-lg text-center">
-                            <p className="text-indigo-200 text-sm font-medium mb-1">Available Funds</p>
-                            <h3 className="text-4xl font-bold text-white mb-2">
-                                ₹{currentUser.wallet_balance?.toLocaleString() || '0'}
-                            </h3>
-                            <p className="text-indigo-300 text-xs">Used for all auction bids</p>
+                        <div className="flex justify-between items-center mb-6">
+                            <h2 className="text-lg font-bold text-slate-900 flex items-center gap-2">
+                                <IndianRupee className="text-slate-400" /> Wallet Balance
+                            </h2>
+                            <button onClick={fetchLatestBalance} className="text-xs text-blue-600 hover:text-blue-700 font-bold">
+                                Refresh
+                            </button>
+                        </div>
+
+                        <div className="p-6 bg-gradient-to-br from-indigo-900 to-indigo-800 rounded-2xl text-white shadow-lg text-center relative overflow-hidden">
+                            <div className="relative z-10">
+                                <p className="text-indigo-200 text-sm font-medium mb-1">Available Funds</p>
+                                <h3 className="text-4xl font-bold text-white mb-2 flex items-center justify-center gap-2">
+                                    {loading ? <Loader2 className="animate-spin" /> : `₹${balance.toLocaleString()}`}
+                                </h3>
+                                <p className="text-indigo-300 text-xs">Used for all auction bids</p>
+                            </div>
                         </div>
 
                         <div className="mt-6 space-y-3">
