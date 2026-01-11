@@ -93,14 +93,7 @@ export default function AdminLoginPage({ onLogin }) {
                     </button>
                 </form>
 
-                <div className="mt-8 text-center">
-                    <button
-                        onClick={() => { setEmail('admin@bidmaster.com'); setPassword('shivraj'); }}
-                        className="text-xs text-slate-500 hover:text-indigo-400 transition-colors uppercase tracking-wider font-semibold"
-                    >
-                        Demo Admin Auto-Fill
-                    </button>
-                </div>
+
             </div>
         </div>
     )

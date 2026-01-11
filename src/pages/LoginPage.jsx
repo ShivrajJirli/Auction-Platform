@@ -32,12 +32,7 @@ export default function LoginPage({ onLogin }) {
         }
     }
 
-    // Quick Demo Login
-    const loginAs = async (demoEmail, demoPass) => {
-        setEmail(demoEmail)
-        setPassword(demoPass)
-        // Auto-submit logic would normally go here, but for now we just pre-fill
-    }
+
 
     return (
         <div className="min-h-screen bg-slate-50 flex items-center justify-center p-4 selection:bg-blue-100">
@@ -111,18 +106,7 @@ export default function LoginPage({ onLogin }) {
                         </p>
                     </div>
 
-                    {/* Demo Links */}
-                    <div className="mt-8 pt-6 border-t border-slate-100">
-                        <p className="text-xs text-center text-slate-400 mb-4 uppercase tracking-wider font-bold">Quick Demo Access</p>
-                        <div className="flex flex-wrap gap-3 justify-center">
-                            <button
-                                onClick={() => loginAs('shivraj14@gmail.com', 'shivraj')}
-                                className="text-xs px-4 py-2 bg-slate-50 text-slate-600 font-semibold rounded-lg border border-slate-200 hover:border-blue-300 hover:text-blue-600 hover:bg-blue-50 transition-all duration-300"
-                            >
-                                Default User (Shivraj)
-                            </button>
-                        </div>
-                    </div>
+
                 </div>
             </div>
         </div>
