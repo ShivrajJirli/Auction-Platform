@@ -84,19 +84,7 @@ export default function ProfilePage({ currentUser, onLogout }) {
                         </div>
                     </div>
 
-                    {/* Auction Stats (Mock data for now, could be real later) */}
-                    <div className="bg-white rounded-2xl shadow-sm border border-slate-200 p-6">
-                        <div className="grid grid-cols-2 gap-4">
-                            <div className="p-4 bg-slate-50 rounded-xl border border-slate-100 text-center">
-                                <div className="text-3xl font-bold text-slate-900">0</div>
-                                <div className="text-xs text-slate-500 uppercase font-bold mt-1">Auctions Won</div>
-                            </div>
-                            <div className="p-4 bg-slate-50 rounded-xl border border-slate-100 text-center">
-                                <div className="text-3xl font-bold text-slate-900">0</div>
-                                <div className="text-xs text-slate-500 uppercase font-bold mt-1">Bids Placed</div>
-                            </div>
-                        </div>
-                    </div>
+
                 </div>
 
                 {/* Right Column: Wallet Summary */}
