@@ -20,8 +20,14 @@ import './App.css'
 function App() {
   const [currentUser, setCurrentUser] = useState(() => {
     // Attempt to hydrate state from localStorage if available
-    const saved = localStorage.getItem('currentUser')
-    return saved ? JSON.parse(saved) : null
+    try {
+      const saved = localStorage.getItem('currentUser')
+      return saved ? JSON.parse(saved) : null
+    } catch (e) {
+      console.error("Failed to parse user session", e)
+      localStorage.removeItem('currentUser')
+      return null
+    }
   })
 
   // Simple Admin Check (in real app, verify with backend)
