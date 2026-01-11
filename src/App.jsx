@@ -18,6 +18,7 @@ import { Loader2 } from 'lucide-react'
 import './App.css'
 
 function App() {
+  console.log('App component rendering');
   const [currentUser, setCurrentUser] = useState(() => {
     // Attempt to hydrate state from localStorage if available
     const saved = localStorage.getItem('currentUser')
