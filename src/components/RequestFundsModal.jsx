@@ -2,7 +2,7 @@ import { useState } from 'react'
 import { supabase } from '../lib/supabaseClient'
 import { X, Loader2, IndianRupee } from 'lucide-react'
 
-export default function RequestFundsModal({ isOpen, onClose, currentUser }) {
+export default function RequestFundsModal({ isOpen, onClose, currentUser, onRefresh }) {
     const [amount, setAmount] = useState('')
     const [loading, setLoading] = useState(false)
     const [success, setSuccess] = useState(false)
@@ -27,6 +27,7 @@ export default function RequestFundsModal({ isOpen, onClose, currentUser }) {
             if (error) throw error
 
             setSuccess(true)
+            if (onRefresh) onRefresh() // Refresh global app state
             setTimeout(() => {
                 onClose()
                 setSuccess(false)

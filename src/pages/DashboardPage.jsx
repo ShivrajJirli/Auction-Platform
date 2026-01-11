@@ -3,7 +3,7 @@ import { useNavigate } from 'react-router-dom'
 import { Wallet, Clock, ArrowRight } from 'lucide-react'
 import RequestFundsModal from '../components/RequestFundsModal'
 
-export default function DashboardPage({ currentUser }) {
+export default function DashboardPage({ currentUser, onRefresh }) {
     const navigate = useNavigate()
     const [isModalOpen, setIsModalOpen] = useState(false)
 
@@ -13,6 +13,7 @@ export default function DashboardPage({ currentUser }) {
                 isOpen={isModalOpen}
                 onClose={() => setIsModalOpen(false)}
                 currentUser={currentUser}
+                onRefresh={onRefresh}
             />
 
             {/* Simple Welcome & Wallet */}

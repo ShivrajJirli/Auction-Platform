@@ -3,8 +3,19 @@ import { useParams, Link } from 'react-router-dom'
 import { supabase } from '../lib/supabaseClient'
 import { Clock, TrendingUp, IndianRupee, History, AlertCircle, CheckCircle2, ArrowLeft } from 'lucide-react'
 
-export default function AuctionComponent({ currentUser }) {
+export default function AuctionComponent({ currentUser, onRefresh }) {
     const { id } = useParams()
+    // ... (keep existing state)
+
+    // ... (inside handlePlaceBid success block)
+    if (!data.success) {
+        setError(data.error)
+    } else {
+        setSuccess(`Bid placed successfully!`)
+        setBidAmount('')
+        fetchUserBalance() // Refresh local balance
+        if (onRefresh) onRefresh() // Refresh global app state
+    }
     const [item, setItem] = useState(null)
     const [bids, setBids] = useState([])
     const [bidAmount, setBidAmount] = useState('')
@@ -159,7 +170,8 @@ export default function AuctionComponent({ currentUser }) {
             } else {
                 setSuccess(`Bid placed successfully!`)
                 setBidAmount('')
-                fetchUserBalance() // Refresh balance
+                fetchUserBalance() // Refresh local balance
+                if (onRefresh) onRefresh() // Refresh global app state
             }
         } catch (err) {
             setError(err.message)

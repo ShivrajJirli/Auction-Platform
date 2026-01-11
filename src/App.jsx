@@ -38,21 +38,22 @@ function App() {
     }
   }, [currentUser])
 
+  // Function to manually refresh user data
+  const refreshUser = async () => {
+    if (!currentUser?.id) return
+    const { data } = await supabase.from('users').select('*').eq('id', currentUser.id).single()
+    if (data) {
+      setCurrentUser(prev => JSON.stringify(prev) !== JSON.stringify(data) ? data : prev)
+    }
+  }
+
   // Real-time User Data Sync
   useEffect(() => {
     if (!currentUser?.id) return
 
-    // 1. Initial Fetch to ensure freshness
-    const fetchFreshUser = async () => {
-      const { data } = await supabase.from('users').select('*').eq('id', currentUser.id).single()
-      if (data) {
-        // Only update if data actually changed to avoid loop
-        setCurrentUser(prev => JSON.stringify(prev) !== JSON.stringify(data) ? data : prev)
-      }
-    }
-    fetchFreshUser()
+    refreshUser() // Initial fetch
 
-    // 2. Subscribe to Real-time Changes
+    // 2. Subscribe to Real-time Changes (Keep as backup)
     const channel = supabase
       .channel('public:users')
       .on(
@@ -74,6 +75,7 @@ function App() {
       supabase.removeChannel(channel)
     }
   }, [currentUser?.id]) // Re-run only if ID changes (login/logout)
+
 
   const handleLogin = (user) => {
     setCurrentUser(user)
@@ -126,9 +128,9 @@ function App() {
             )
           }
         >
-          <Route index element={<DashboardPage currentUser={currentUser} />} />
+          <Route index element={<DashboardPage currentUser={currentUser} onRefresh={refreshUser} />} />
           <Route path="auctions" element={<AuctionListPage />} />
-          <Route path="auction/:id" element={<AuctionComponent currentUser={currentUser} />} />
+          <Route path="auction/:id" element={<AuctionComponent currentUser={currentUser} onRefresh={refreshUser} />} />
           <Route path="auction" element={<Navigate to="/dashboard/auctions" replace />} /> {/* Redirect old route absolute path */}
           <Route path="analytics" element={<AnalyticsPage currentUser={currentUser} />} />
           <Route path="profile" element={<ProfilePage currentUser={currentUser} onLogout={handleLogout} />} />
